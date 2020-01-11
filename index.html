@@ -7,7 +7,7 @@
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.6";
+    var version = "0.1";
   </script>
   
   <meta charset="UTF-8">
@@ -138,13 +138,13 @@
           <p>日期時間:</p>
           <p>費用:</p>
         </div>
-        <button class="w3-button w3-block w3-indigo" onclick="報名課程(1)">報名</button>
+        <button class="w3-button w3-block w3-indigo" onclick="使用優惠券(1)">報名</button>
       </div>
   -->
     </div>   
     
     <hr>
-    <div class="w3-container" id="inCourses" style="font-family: 'Noto Sans TC'">
+    <div class="w3-container" id="usedCoupons" style="font-family: 'Noto Sans TC'">
       <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
       <h4 style="font-family: 'Noto Sans TC'; display: inline">已使用優惠券</h4>
 
@@ -158,13 +158,13 @@
           <p>日期時間:</p>
           <p>費用:</p>
         </div>
-        <button class="w3-button w3-block w3-indigo" onclick="報名課程(1)">報名</button>
+        <button class="w3-button w3-block w3-indigo" onclick="使用優惠券(1)">報名</button>
       </div>
   -->
     </div> 
                  
     <hr>
-    <div class="w3-container" id="oldCourses" style="font-family: 'Noto Sans TC'">
+    <div class="w3-container" id="oldCoupons" style="font-family: 'Noto Sans TC'">
       <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
       <h4 style="font-family: 'Noto Sans TC'; display: inline">已到期優惠券</h4>
 
@@ -178,7 +178,7 @@
           <p>日期時間:</p>
           <p>費用:</p>
         </div>
-        <button class="w3-button w3-block w3-indigo" onclick="報名課程(1)">報名</button>
+        <button class="w3-button w3-block w3-indigo" onclick="使用優惠券(1)">報名</button>
       </div>
   -->
     </div>                  
@@ -233,13 +233,13 @@
     var inputError = false;
     //var userIdString = location.search;  
     
-    var courseData=[];
-    var courseHistory=[];
-    var courseMember=[];    
+    var couponData=[];
+    var couponHistory=[];
+    var couponMember=[];    
     var allDataReady=0;
 
-    notInCourse=[];
-    inCourse=[];
+    notInCoupon=[];
+    inCoupon=[];
     myHistory=[];     
     
     $("#joinForm").hide();
@@ -302,12 +302,12 @@
           $("#joinForm").hide();
           $("#joinFormHeader").hide();
           //$("#alreadyMessage").css("display", "block");            
-          //alert("您以前已經加入會員! 前往團課");
-          // 顯示團課表格
-          console.log("前往團課");
+          //alert("您以前已經加入會員! 前往優惠券");
+          // 顯示優惠券表格
+          console.log("前往優惠券");
           $("#courseSection").css("display", "block");
-          readCourses();
-          //addCourseCards();
+          readCoupons();
+          //addCouponCards();
         }
       }
       // Send API request 
@@ -373,11 +373,11 @@
             $("#joinFormHeader").hide();
             //$("#finishMessage").css("display", "block"); 
             alert("會員加入成功，前往優惠券")
-            // 顯示團課表格
+            // 顯示優惠券表格
             console.log("前往優惠券");
             $("#courseSection").css("display", "block");
-            readCourses();
-            //addCourseCards();
+            readCoupons();
+            //addCouponCards();
 
           } else {
             alert("會員加入失敗，請洽管理員")
@@ -392,27 +392,22 @@
       };
     };
 
-    function readCourses(){
+    function readCoupons(){
       console.log("call API to Read Database");
       userName = decodeURI(displayName[1]);
       
       // hard coded data, TODO: replaced with APIs ==========================================
-
-//      courseData = [
-//        ["U0003", "TEST 3", "測試 老師 #3", "2020-1-23 19:00", "300", "30", "cat", "300", ""],        
-//        ["U0004", "TEST 4", "測試 老師 #4", "2020-1-24 20:00", "400", "40", "dale", "400", ""],
-//        ["U0005", "TEST 5", "測試 老師 #5", "2020-1-25 20:00", "500", "50", "dale", "500", ""],        
+//      couponData = [
+//        ["C0002","TEST #2 單次","2020-1-9",""],
+//        ["C0003","TEST #3","2020-1-11",""],
 //      ];
-//      courseHistory = [
-//        ["U0001", "TEST 1", "測試 老師 #1", "2020-1-22 19:30", "100", "10", "bob", "200", ""],
-//        ["U0002", "TEST 2", "測試 老師 #2", "2020-1-21 18:30", "200", "20", "alan", "100", ""],       
+//      couponHistory = [
+//        ["C0001","Test1","2020-1-9",""],   
 //      ];
-//      courseMember =[
-//        ["U0001", ["Paul Kang", "已繳費", "已簽到"], ["小陳", "未繳費", "未簽到"]],
-//        ["U0002", ["小琦", "已繳費", "已簽到"], ["小陳", "已繳費", "未簽到"], ["Paul Kang", "已繳費", "未簽到"]],     
-//        ["U0003", ["Paul Kang", "已繳費", "未簽到"],                          ],
-//        ["U0004", ["Paul Kang", "未繳費", "未簽到"],                          ],
-//        ["U0005",                          ],        
+//      courseMember = [
+//        ["C0001",["小白","已使用","已確認"],["小華","已使用","已確認"],  ["小陳","已使用","未確認"]],
+//        ["C0002",["小白","已使用","已確認"],["小華","已使用","已確認"],["Jacky","已使用","未確認"]],
+//        ["C0003",                                                                          ],
 //      ];
       // =====================================================================================
       
@@ -421,43 +416,43 @@
       getDataByAPIs();
 
       var checkDataReady = setInterval(function(){ 
-        console.log("aaa", allDataReady);
+        //console.log("aaa", allDataReady);
         if (allDataReady==3) {
           clearInterval(checkDataReady);
           console.log("Data is ready");
           //alert("Data is ready");
           $.loading.end();
-          notInCourse=[];
-          inCourse=[];
+          notInCoupon=[];
+          inCoupon=[];
           myHistory=[];     
-          var attended=false;
+          var used=false;
           var isNow=false;
           var inHistory=false; 
-          courseMember.forEach(function(course, index, array){  
-            attended = false;        
-            for (var i=1; i<course.length;i++) {
-              //console.log(course[i][0]);
-              if (course[i][0] == userName) {
-                //console.log(course[0],userName, "已參加")
-                attended = true;
+          couponMember.forEach(function(coupon, index, array){  
+            used = false;        
+            for (var i=1; i<coupon.length;i++) {
+              //console.log(coupon[i][0]);
+              if (coupon[i][0] == userName) {
+                //console.log(coupon[0],userName, "已使用")
+                used = true;
               }
             };
 
             isNow = false;
-            courseData.forEach(function(newCourse, index, array){
-              if (newCourse[0]==course[0]) isNow = true; 
+            couponData.forEach(function(newCoupon, index, array){
+              if (newCoupon[0]==coupon[0]) isNow = true; 
             });
 
             inHistory = false;
-            courseHistory.forEach(function(oldCourse, index, array){
-              if (oldCourse[0]==course[0]) inHistory = true; 
+            couponHistory.forEach(function(oldCoupon, index, array){
+              if (oldCoupon[0]==coupon[0]) inHistory = true; 
             });
 
-            if (!attended && isNow)     notInCourse.push(course[0]);
-            if (attended  && isNow)     inCourse.push(course[0]);        
-            if (attended  && inHistory) myHistory.push(course[0]);
+            if (!used && isNow)     notInCoupon.push(coupon[0]);
+            if (used  && isNow)     inCoupon.push(coupon[0]);        
+            if (used  && inHistory) myHistory.push(coupon[0]);
           });
-          addCourseCards();
+          addCouponCards();
         }
       }, 100);
      
@@ -465,9 +460,9 @@
   
   
     function getDataByAPIs() {
-      var request1, reuquest2, request2;
-      // call API:10 =========================================================================
-      paramToSend = "?API=10";      
+      var request1, reuquest2, request3;
+      // call API:30 =========================================================================
+      paramToSend = "?API=30";      
       request1 = new XMLHttpRequest()
       if (useLocalAPIs) {
         request1.open('GET', 'http://localhost:5000' + paramToSend, true);
@@ -476,14 +471,14 @@
       }
 
       request1.onload = function() {
-        if (this.response != "API:10 courseData 讀取失敗") {
-          courseData = JSON.parse(this.response);
-          console.log(courseData);
+        if (this.response != "API:30 couponData 讀取失敗") {
+          couponData = JSON.parse(this.response);
+          //console.log(couponData);
           allDataReady++;
           request2.send();
         } else {
           clearInterval(checkDataReady);
-          alert("API:10 courseData 讀取失敗")
+          alert("API:30 couponData 讀取失敗")
         }
 
       }
@@ -491,8 +486,8 @@
       request1.send();
       // =====================================================================================      
 
-      // call API:11 =========================================================================
-      paramToSend = "?API=11";      
+      // call API:31 =========================================================================
+      paramToSend = "?API=31";      
       request2= new XMLHttpRequest()
       if (useLocalAPIs) {
         request2.open('GET', 'http://localhost:5000' + paramToSend, true);
@@ -501,24 +496,22 @@
       }
 
       request2.onload = function() {
-        if (this.response != "API:11 courseHistory 讀取失敗") {
-          courseHistory = JSON.parse(this.response);
-          console.log(courseHistory);
+        if (this.response != "API:31 courseHistory 讀取失敗") {
+          couponHistory = JSON.parse(this.response);
+          //console.log(couponHistory);
           allDataReady++;
           request3.send();          
         } else {
           clearInterval(checkDataReady);
-          alert("API:11 courseHistory 讀取失敗")
+          alert("API:31 courseHistory 讀取失敗")
         }
 
       }
-      // Send request
-      //request2.send();
       // =====================================================================================      
       
 
-      // call API:12 =========================================================================
-      paramToSend = "?API=12";      
+      // call API:32 =========================================================================
+      paramToSend = "?API=32";      
       request3 = new XMLHttpRequest()
       if (useLocalAPIs) {
         request3.open('GET', 'http://localhost:5000' + paramToSend, true);
@@ -527,23 +520,21 @@
       }
 
       request3.onload = function() {
-        if (this.response != "API:12 courseMember 讀取失敗") {
-          courseMember = JSON.parse(this.response);
-          console.log(courseMember);
+        if (this.response != "API:32 couponMember 讀取失敗") {
+          couponMember = JSON.parse(this.response);
+          //console.log(couponMember);
           allDataReady++;
         } else {
           clearInterval(checkDataReady);
-          alert("API:12 courseMember 讀取失敗")
+          alert("API:32 couponMember 讀取失敗")
         }
 
       }
-      // Send request
-      //request3.send();
       // ===================================================================================== 
       
     }
     
-    function addCourseCards(){
+    function addCouponCards(){
       console.log("add cards");
       
       // cardStr1+課程名稱+cardStr2+老師名字+cardStr3+日期時間+cardStr4+費用+cardStr5+index+cardStr6
@@ -553,7 +544,7 @@
       var cardStr3='<span style="float:right">日期:';
       var cardStr4='</span><p>卡路里: ';
       var cardStr5='<span style="float:right">費用: ';    
-      var cardStr6='</span></p> </div> <button class="w3-button w3-block w3-indigo" onclick="報名課程(\'';
+      var cardStr6='</span></p> </div> <button class="w3-button w3-block w3-indigo" onclick="使用優惠券(\'';
       var cardStr7='\')" >使用優惠券</button> </div>';
       
       var cardStr6_1='</span></p> </div> <button class="w3-button w3-block w3-grey">';
@@ -561,15 +552,15 @@
       
       var cardStr11='<br> <div class="w3-card-4" style="width:100%;"> <header class="w3-container w3-teal"> \
                     <h5 class="s-header" style="font-family: \'Noto Sans TC\'">'; //優惠券編號及優惠券名稱
-      var cardStr12='</h5> </header> <div class="w3-container" > <p style="margin:0px">使用期限:';
-      var cardStr14='</p><img src="優惠.png" alt="" style="height:100px;"></div> <button class="w3-button w3-block w3-indigo" onclick="報名課程(\'';
+      var cardStr12='</h5> </header> <div class="w3-container" > <p style="margin:0px">使用期限: ';
+      var cardStr14='</p><img src="優惠.png" alt="" style="height:50px;"></div> <button class="w3-button w3-block w3-indigo" onclick="使用優惠券(\'';
       var cardStr17='\')" >使用優惠券</button> </div>';
 
       //var cardStr12_1='</h5> </header> <div class="w3-container" > <p style="margin:0px">已使用';  
       //var cardStr13_1='</p></div></div>';
       var cardStr12_1='</h5> </header>';  
       var cardStr13_1='</div>';      
-      var cardStr14_1='</p> </div> <button class="w3-button w3-block w3-grey">';
+      var cardStr14_1='</p><img src="優惠.png" alt="" style="height:50px;"></div> <button class="w3-button w3-block w3-grey">';
       var cardStr17_1='</button></div>';       
              
 
@@ -578,23 +569,20 @@
       var 優惠券名稱=[];
       var 優惠券日期=[];     
       
-      // 新增 可報名課程 卡片 ==============================================================      
-      notInCourse.forEach(function(courseN, indexN, arrayN){
-        courseData.forEach(function(course, index, array){
-          if (courseN == course[0]) {
-            //console.log(course);
-            優惠券編號.push(course[0]);
-            優惠券名稱.push(course[1]);
-            //優惠券內容.push(course[2]);
-            優惠券日期.push(course[3]);
-            //卡路里.push(course[4]);
-            //費用.push(course[7]);            
+      // 新增 可使用優惠券 卡片 ==============================================================      
+      notInCoupon.forEach(function(couponN, indexN, arrayN){
+        couponData.forEach(function(coupon, index, array){
+          if (couponN == coupon[0]) {
+            //console.log(coupon);
+            優惠券編號.push(coupon[0]);
+            優惠券名稱.push(coupon[1]);
+            優惠券日期.push(coupon[2]);           
           }
         });
       });
 
       var cardStr;
-      for (var i=0;i<notInCourse.length;i++) {
+      for (var i=0;i<notInCoupon.length;i++) {
         cardStr = cardStr11+優惠券編號[i] + " - " +優惠券名稱[i]
                  //+cardStr12+優惠券內容[i] 
                  +cardStr12+優惠券日期[i]
@@ -606,78 +594,76 @@
       }
       // ================================================================================ 
 
-      // 新增 已報名課程 卡片 ==============================================================
+      // 新增 已使用優惠券 卡片 ==============================================================
       // 課程編號=[];  課程名稱=[];  老師名字=[];  日期時間=[];  卡路里=[];   費用=[];  
       優惠券編號=[]; 優惠券名稱=[]; 優惠券內容=[]; 優惠券日期=[];    
-      inCourse.forEach(function(courseN, indexN, arrayN){
-        courseData.forEach(function(course, index, array){
-          if (courseN == course[0]) {
-            //console.log(course);
-            優惠券編號.push(course[0]);
-            優惠券名稱.push(course[1]);
-            //優惠券內容.push(course[2]);
-            優惠券日期.push(course[3]);
-            //卡路里.push(course[4]);
-            //費用.push(course[7]);             
+      inCoupon.forEach(function(couponN, indexN, arrayN){
+        couponData.forEach(function(coupon, index, array){
+          if (couponN == coupon[0]) {
+            //console.log(coupon);
+            優惠券編號.push(coupon[0]);
+            優惠券名稱.push(coupon[1]);
+            優惠券日期.push(coupon[2]);      
           }
         });
       });
 
       var cardStr;
-      var paid=false;
-      for (var i=0;i<inCourse.length;i++) {
-        // 尋找是否已繳費
-//        paid=false;
-//        courseMember.forEach(function(course, index, array){
-//          if (course[0]==inCourse[i]) {
-//            for (var j=1;j<course.length;j++){
-//              if (course[j][0]==userName && course[j][1]=="已繳費") {
-//                paid=true;
-//              }
-//            };
-//          }
-//        });
-         
+      var confirmed=false;
+      for (var i=0;i<inCoupon.length;i++) {
+        // 尋找是否已確認
+        confirmed=false;
+        couponMember.forEach(function(coupon, index, array){
+          if (coupon[0]==inCoupon[i]) {
+            for (var j=1;j<coupon.length;j++){
+              if (coupon[j][0]==userName && coupon[j][2]=="已確認") {
+                confirmed=true;
+              }
+            };
+          }
+        });
+        
+        var confirmedStr = (confirmed)?"已確認使用":"請到櫃台確認使用"
         // 合成字串
         cardStr = cardStr11+優惠券編號[i] + " - " +優惠券名稱[i]
-                 //+cardStr12+優惠券內容[i] 
-                 +cardStr12_1
-                 //+cardStr14_1+"已使用"
-                 +cardStr13_1;
+                 +cardStr12+優惠券日期[i] 
+                 //+cardStr12_1
+                 //+cardStr14_1
+                 //+cardStr13_1
+                 +cardStr14_1+confirmedStr
+                 +cardStr17_1;
         //console.log(cardStr);
 
-        $("#inCourses").append(cardStr);
+        $("#usedCoupons").append(cardStr);
       }      
       // ===================================================================================      
       
-      // 新增 過期已報名課程 卡片 ==============================================================
-      課程編號=[];  課程名稱=[];  老師名字=[];  日期時間=[];  卡路里=[];   費用=[];        
-      myHistory.forEach(function(courseN, indexN, arrayN){
-        courseHistory.forEach(function(course, index, array){
-          if (courseN == course[0]) {
-            //console.log(course);
-            課程編號.push(course[0]);
-            課程名稱.push(course[1]);
-            老師名字.push(course[2]);
-            日期時間.push(course[3]);
-            卡路里.push(course[4]);
-            費用.push(course[7]);            
+      // 新增 過期已使用優惠券 卡片 ==============================================================
+      //課程編號=[];  課程名稱=[];  老師名字=[];  日期時間=[];  卡路里=[];   費用=[];  
+      優惠券編號=[]; 優惠券名稱=[]; 優惠券內容=[]; 優惠券日期=[];  
+      myHistory.forEach(function(couponN, indexN, arrayN){
+        couponHistory.forEach(function(coupon, index, array){
+          if (couponN == coupon[0]) {
+            //console.log(coupon);
+            優惠券編號.push(coupon[0]);
+            優惠券名稱.push(coupon[1]);
+            優惠券日期.push(coupon[2]);            
           }
         });
       });
 
       var cardStr;
       for (var i=0;i<myHistory.length;i++) {
-        cardStr = cardStr1+課程編號[i] + " - " +課程名稱[i]
-                 +cardStr2+老師名字[i] 
-                 +cardStr3+日期時間[i]
-                 +cardStr4+卡路里[i]
-                 +cardStr5+費用[i]      
-                 +cardStr6_1
-                 +cardStr7_1;
+        cardStr = cardStr11+優惠券編號[i] + " - " +優惠券名稱[i]
+                 +cardStr12+優惠券日期[i] 
+                 //+cardStr12_1
+                 //+cardStr14_1
+                 //+cardStr13_1
+                 +cardStr14_1+"已過期"
+                 +cardStr17_1;
         //console.log(cardStr);
 
-        $("#oldCourses").append(cardStr);
+        $("#oldCoupons").append(cardStr);
       }      
       // ===================================================================================            
       
@@ -686,11 +672,11 @@
     
  
     
-    function 報名課程(courseId){
-      console.log(userName,"報名課程:", courseId, typeof courseId);
+    function 使用優惠券(couponId){
+      console.log(userName,"使用優惠券:", couponId, typeof couponId);
       
-      // call API:20 =========================================================================
-      paramToSend = "?API=20&"+"UserName="+userName+"&CourseId="+courseId;
+      // call API:40 =========================================================================
+      paramToSend = "?API=40&"+"UserName="+userName+"&CouponId="+couponId;
       console.log(paramToSend);
       var request = new XMLHttpRequest()
       if (useLocalAPIs) {
@@ -702,12 +688,12 @@
       request.onload = function() {
         alert(this.response);
         refreshCourses();
-//        if (this.response != "API:20 會員報名失敗") {
-//          courseData = JSON.parse(this.response);
-//          console.log(courseData);
-//        } else {
-//          alert("API:20 會員報名失敗")
-//        }
+//old        if (this.response != "API:20 會員報名失敗") {
+//old       courseData = JSON.parse(this.response);
+//old       console.log(courseData);
+//old     } else {
+//old       alert("API:20 會員報名失敗")
+//old     }
       }
       // Send request
       request.send();      
