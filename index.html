@@ -7,7 +7,7 @@
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.1";
+    var version = "0.11";
   </script>
   
   <meta charset="UTF-8">
@@ -69,7 +69,7 @@
   <div id="joinForm" class="w3-container bg" style="font-family: 'Noto Sans TC'">
     <p>
       <label>姓名(必填)</label>
-      <input id="name" class="w3-input" type="text"></p>
+      <label id="name" class="w3-input" type="text"></p>
     <p>
       <label>姓別(必填，Inbody 量測需要)</label>
       <select id="gender" class="w3-select" name="option">
@@ -269,7 +269,7 @@
 
         checkUserIdExist();
 
-        $("#name").val(decodeURI(displayName[1]));
+        $("#name").text(decodeURI(displayName[1]));
 
 
       } else {
