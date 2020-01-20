@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 
-<!--處理輸入參數 ?displayName=小陳&userId=U12345678901234567890123456789012&pictureUrl=www.google.com-->
+<!--處理輸入參數 ?displayName=小林&userId=U12345678901234567890123456789012&pictureUrl=www.google.com-->
 
 <head>
   <!--  設定參數-->
   <script>
     var useLocalAPIs = false;
-    var version = "0.11";
+    var version = "0.5";
   </script>
   
   <meta charset="UTF-8">
@@ -60,8 +60,8 @@
 <body>
 <div id="mescroll" class="mescroll"> 
   <div id="joinFormHeader" class="w3-container w3-blue">
-    <h2 style="font-family: 'Noto Sans TC'">加入林口運動中心會員 
-      <span id="versionStr" style="float: right; font-size: 0.5em;"></span>
+    <h2 style="font-family: 'Noto Sans TC'">請提供參加團體課程，挑戰賽及使用優惠券的必要資料 
+      <span id="versionStr1" style="float: right; font-size: 0.5em;"></span>
     </h2>
     
   </div>
@@ -94,10 +94,10 @@
       <label>地址(建議，聯絡使用)</label>
       <input id="address" class="w3-input" type="text"></p>
     <p>
-      <button class="w3-btn w3-block w3-indigo" onclick="addConfirm()">加入會員</button>
+      <button class="w3-btn w3-block w3-indigo" onclick="addConfirm()">送出資料</button>
     </p>
     <p>
-      <label>點擊 加入會員 表示您同意以下隱私權以及資料使用條款聲明</label>
+      <label>點擊 送出資料 表示您同意以下隱私權以及資料使用條款聲明</label>
     </p>
   </div>
 
@@ -115,16 +115,16 @@
     </div>
   </div>
   
-<!--    ---------- 以下是 團課資料  --------------------------------------------------- ----->
+<!--    ---------- 以下是 優惠券資料  --------------------------------------------------- ----->
   <div id="courseSection" style="display: none">
     <div id="courseSectionHeader" class="w3-container w3-blue">
       <h2 style="font-family: 'Noto Sans TC'">我的優惠券 
-        <span id="versionStr" style="float: right; font-size: 0.5em;"></span>
+        <span id="versionStr2" style="float: right; font-size: 0.5em;"></span>
       </h2>
     </div> 
          
     <div class="w3-container" id="availableCourses" style="font-family: 'Noto Sans TC'">
-      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px;"></i></button></span>
+      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCoupons()"><i class="fa fa-refresh" style="margin-left: -3px;"></i></button></span>
       <h4 style="font-family: 'Noto Sans TC'; display: inline;">可用優惠券</h4>
       
 
@@ -145,7 +145,7 @@
     
     <hr>
     <div class="w3-container" id="usedCoupons" style="font-family: 'Noto Sans TC'">
-      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
+      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCoupons()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
       <h4 style="font-family: 'Noto Sans TC'; display: inline">已使用優惠券</h4>
 
   <!--
@@ -165,7 +165,7 @@
                  
     <hr>
     <div class="w3-container" id="oldCoupons" style="font-family: 'Noto Sans TC'">
-      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCourses()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
+      <span><button class="w3-button w3-circle w3-teal" style="margin: 10px; width: 40px" onclick="refreshCoupons()"><i class="fa fa-refresh" style="margin-left: -3px"></i></button></span>     
       <h4 style="font-family: 'Noto Sans TC'; display: inline">已到期優惠券</h4>
 
   <!--
@@ -186,7 +186,8 @@
   </div>  
   </div>
   <script>
-    $("#versionStr").text("v."+version);
+    $("#versionStr1").text("v."+version);
+    $("#versionStr2").text("v."+version);    
     if (useLocalAPIs) {
       console.log("使用 local API 服務");
     } else {
@@ -235,7 +236,8 @@
     
     var couponData=[];
     var couponHistory=[];
-    var couponMember=[];    
+    var couponMember=[];  
+    var userPhoneNumber;
     var allDataReady=0;
 
     notInCoupon=[];
@@ -297,7 +299,7 @@
         if (this.response == "API:00 會員不存在") {
           $("#joinForm").show();
           $("#joinFormHeader").show();
-          alert("還不是會員，請先加入為會員")
+          alert("為了讓您更容易使用團體課程，挑戰賽及使用優惠券，請填寫必要資料")
         } else {
           $("#joinForm").hide();
           $("#joinFormHeader").hide();
@@ -311,7 +313,7 @@
         }
       }
       // Send API request 
-      $.loading.start('檢查是否已是會員');
+      $.loading.start('檢查是否已填寫必要資料');
      
       request.send();
     }
@@ -372,7 +374,7 @@
             $("#joinForm").hide();
             $("#joinFormHeader").hide();
             //$("#finishMessage").css("display", "block"); 
-            alert("會員加入成功，前往優惠券")
+            alert("資料新增成功，前往優惠券")
             // 顯示優惠券表格
             console.log("前往優惠券");
             $("#courseSection").css("display", "block");
@@ -380,7 +382,7 @@
             //addCouponCards();
 
           } else {
-            alert("會員加入失敗，請洽管理員")
+            alert("資料新增失敗，請洽管理員")
             $("#joinForm").hide();
             $("#errorMessage").css("display", "block");
           }
@@ -395,29 +397,14 @@
     function readCoupons(){
       console.log("call API to Read Database");
       userName = decodeURI(displayName[1]);
-      
-      // hard coded data, TODO: replaced with APIs ==========================================
-//      couponData = [
-//        ["C0002","TEST #2 單次","2020-1-9",""],
-//        ["C0003","TEST #3","2020-1-11",""],
-//      ];
-//      couponHistory = [
-//        ["C0001","Test1","2020-1-9",""],   
-//      ];
-//      courseMember = [
-//        ["C0001",["小白","已使用","已確認"],["小華","已使用","已確認"],  ["小陳","已使用","未確認"]],
-//        ["C0002",["小白","已使用","已確認"],["小華","已使用","已確認"],["Jacky","已使用","未確認"]],
-//        ["C0003",                                                                          ],
-//      ];
-      // =====================================================================================
-      
 
-      $.loading.start('讀取資料');
-      getDataByAPIs();
+//      $.loading.start('讀取資料');
+//      allDataReady=0;
+//      getDataByAPIs();
 
       var checkDataReady = setInterval(function(){ 
         //console.log("aaa", allDataReady);
-        if (allDataReady==3) {
+        if (allDataReady==4) {
           clearInterval(checkDataReady);
           console.log("Data is ready");
           //alert("Data is ready");
@@ -432,7 +419,7 @@
             used = false;        
             for (var i=1; i<coupon.length;i++) {
               //console.log(coupon[i][0]);
-              if (coupon[i][0] == userName) {
+              if (coupon[i][4] == userPhoneNumber) {
                 //console.log(coupon[0],userName, "已使用")
                 used = true;
               }
@@ -455,12 +442,16 @@
           addCouponCards();
         }
       }, 100);
+      
+      $.loading.start('讀取資料');
+      allDataReady=0;
+      getDataByAPIs();      
      
     };
   
   
     function getDataByAPIs() {
-      var request1, reuquest2, request3;
+      var request1, reuquest2, request3, request4;
       // call API:30 =========================================================================
       paramToSend = "?API=30";      
       request1 = new XMLHttpRequest()
@@ -524,6 +515,7 @@
           couponMember = JSON.parse(this.response);
           //console.log(couponMember);
           allDataReady++;
+          request4.send();           
         } else {
           clearInterval(checkDataReady);
           alert("API:32 couponMember 讀取失敗")
@@ -531,7 +523,31 @@
 
       }
       // ===================================================================================== 
-      
+
+      // call API:13 =========================================================================
+      paramToSend = "?API=13&"+"UserId="+userId[1];      
+      request4 = new XMLHttpRequest()
+      if (useLocalAPIs) {
+        request4.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request4.open('GET', 'https://api-ugym-courses.herokuapp.com/'+paramToSend, true);
+      }
+
+      request4.onload = function() {
+        var responseMsg = this.response;
+        
+        //responseMsg="API:13 courseMember 讀取失敗"; //故意測試錯誤         
+        if (responseMsg.substr(0,6) != "API:13") {
+          userPhoneNumber = responseMsg;
+          allDataReady++;         
+        } else {
+          clearInterval(checkDataReady);
+          $.loading.end();
+          alert("客戶資料讀取失敗，請稍後再試，或洽櫃台人員");
+        }
+
+      }
+      // =====================================================================================      
     }
     
     function addCouponCards(){
@@ -670,13 +686,11 @@
     };
         
     
- 
-    
     function 使用優惠券(couponId){
       console.log(userName,"使用優惠券:", couponId, typeof couponId);
       
       // call API:40 =========================================================================
-      paramToSend = "?API=40&"+"UserName="+userName+"&CouponId="+couponId;
+      paramToSend = "?API=40&"+"UserName="+userName+"&CouponId="+couponId+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
       console.log(paramToSend);
       var request = new XMLHttpRequest()
       if (useLocalAPIs) {
@@ -687,20 +701,14 @@
 
       request.onload = function() {
         alert(this.response);
-        refreshCourses();
-//old        if (this.response != "API:20 會員報名失敗") {
-//old       courseData = JSON.parse(this.response);
-//old       console.log(courseData);
-//old     } else {
-//old       alert("API:20 會員報名失敗")
-//old     }
+        refreshCoupons();
       }
       // Send request
       request.send();      
       
     }
     
-    function refreshCourses() {
+    function refreshCoupons() {
       console.log("refresh Courses");
       location.reload();
     }
